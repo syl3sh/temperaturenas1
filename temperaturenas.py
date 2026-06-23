@@ -11,8 +11,7 @@ import time
 st.header("NAS System Dashboard", divider="rainbow")
 
 base = "http://192.168.11.228:5000/webapi"
-username = "admin"
-password = "Testsvr$#604"
+
 
 @st.cache_data(ttl=30)
 def get_sid():
@@ -20,8 +19,8 @@ def get_sid():
             "api":"SYNO.API.Auth",
             "version": 6,
             "method": "login",
-            "account": username,
-            "passwd": password,
+            "account": st.secrets["secrets"]["DB_USERNAME"],
+            "passwd": st.secrets["secrets"]["DB_PASSWORD"],
             "session": "FileStation",
             "format" : "sid"
         })
@@ -122,7 +121,7 @@ if sid:
                 col1, col2, col3 = st.columns(3)
                 col1.metric("Total", bytes_to_human(total))
                 col2.metric("Used",  bytes_to_human(used))
-                col3.metric("Free",  bytes_to_human(int(total)-int(used)))
+                col3.metric("Free",  bytes_to_human((int(total) - int(used)) if total and used else free))
 
                 if used and total:
                     try:
